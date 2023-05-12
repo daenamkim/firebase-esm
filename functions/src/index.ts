@@ -17,9 +17,9 @@ admin.initializeApp();
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = onRequest((request, response) => {
+export const helloWorld = onRequest((_req, res) => {
   logger.info("Hello logs!", {structuredData: true});
-  response.send("Hello from Firebase!");
+  res.send("Hello from Firebase!");
 });
 
 // Take the text parameter passed to this HTTP endpoint and insert it into
@@ -75,8 +75,8 @@ export const makeUppercase = functions.firestore
     return snap.ref.set({uppercase}, {merge: true});
   });
 
-  export const createIpfs = functions.https.onRequest(async (req, res) => {
-    const client = createIpfsClient();
-    logger.info(client);
-  });
+export const createIpfs = functions.https.onRequest(async (_req, _res) => {
+  const client = createIpfsClient();
+  logger.info(client);
+});
 
