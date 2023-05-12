@@ -11,6 +11,7 @@ import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import {create, IPFSHTTPClient} from "ipfs-http-client";
 admin.initializeApp();
 
 // Start writing functions
@@ -20,6 +21,26 @@ export const helloWorld = onRequest((request, response) => {
   logger.info("Hello logs!", {structuredData: true});
   response.send("Hello from Firebase!");
 });
+
+
+/**
+ * create an ipfs client
+ * @return {IPFSHTTPClient}
+ */
+export function createIpfsClient(): IPFSHTTPClient {
+  const endpoint = new URL("https://ipfs.infura.io:5001");
+  const auth =
+    `Basic ${Buffer.from("IPFS_USERNAME:IPFS_PASSWORD").toString("base64")}`;
+  return create({
+    host: endpoint.host,
+    port: Number(endpoint.port),
+    protocol: endpoint.protocol,
+    headers: {
+      authorization: auth,
+    },
+  });
+}
+
 
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Firestore under the path /messages/:documentId/original
