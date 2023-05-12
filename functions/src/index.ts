@@ -22,26 +22,6 @@ export const helloWorld = onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
-
-/**
- * create an ipfs client
- * @return {IPFSHTTPClient}
- */
-export function createIpfsClient(): IPFSHTTPClient {
-  const endpoint = new URL("https://ipfs.infura.io:5001");
-  const auth =
-    `Basic ${Buffer.from("IPFS_USERNAME:IPFS_PASSWORD").toString("base64")}`;
-  return create({
-    host: endpoint.host,
-    port: Number(endpoint.port),
-    protocol: endpoint.protocol,
-    headers: {
-      authorization: auth,
-    },
-  });
-}
-
-
 // Take the text parameter passed to this HTTP endpoint and insert it into
 // Firestore under the path /messages/:documentId/original
 export const addMessage = functions.https.onRequest(async (req, res) => {
@@ -55,6 +35,25 @@ export const addMessage = functions.https.onRequest(async (req, res) => {
   // Send back a message that we've successfully written the message
   res.json({result: `Message with ID: ${writeResult.id} added.`});
 });
+
+/**
+ * create an ipfs client
+ * @return {IPFSHTTPClient}
+ */
+function createIpfsClient(): IPFSHTTPClient {
+  const endpoint = new URL("https://ipfs.infura.io:5001");
+  const auth =
+    `Basic ${Buffer.from("IPFS_USERNAME:IPFS_PASSWORD").toString("base64")}`;
+  return create({
+    host: endpoint.host,
+    port: Number(endpoint.port),
+    protocol: endpoint.protocol,
+    headers: {
+      authorization: auth,
+    },
+  });
+}
+
 
 // Listens for new messages added to /messages/:documentId/original
 // and creates an uppercase version of the message
@@ -75,3 +74,9 @@ export const makeUppercase = functions.firestore
     // Setting an 'uppercase' field in Firestore document returns a Promise.
     return snap.ref.set({uppercase}, {merge: true});
   });
+
+  export const createIpfs = functions.https.onRequest(async (req, res) => {
+    const client = createIpfsClient();
+    logger.info(client);
+  });
+
